@@ -20,7 +20,7 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "uninitialized.application.id",
+      "package_name": "com.bbl.mobilebanking",
       "sha256_cert_fingerprints": [
         "3B:02:BF:51:96:E1:A7:54:B5:BC:55:5A:87:F5:61:CC:B1:92:93:43:CB:FC:4E:3B:1D:3C:50:04:D0:AA:4D:5A"
       ]
