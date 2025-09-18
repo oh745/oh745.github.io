@@ -1,11 +1,19 @@
 {
-  "applinks": {
-    "apps": [],
-    "details": [
-      {
-        "appID": "727K5FKASY.com.bangkokbankpilot.mbanking",
-        "paths": ["*"]
-      }
-    ]
-  }
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "paths": [
+                    "*"
+                ],
+                "appID": "C6E5752KAG.com.bangkokbank.mbanking"
+            },
+            {
+                "paths": [
+                    "*"
+                ],
+                "appID": "727K5FKASY.com.bangkokbankpilot.mbanking"
+            }
+        ]
+    }
 }
