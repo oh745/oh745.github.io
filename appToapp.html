@@ -26,11 +26,11 @@
             var finalUrl = googleUrl || redirectUrl;
             
             // Validate that it's a Google URL for security
-            if (finalUrl && (finalUrl.includes('google.com') || finalUrl.includes('googleapis.com'))) {
+            if (finalUrl && (finalUrl.includes('google.com') || finalUrl.includes('googleapis.com') || finalUrl.includes('apps.apple.com'))) {
                 window.location.href = finalUrl;
             } else {
                 document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerText = 'Invalid redirect URL. Only Google URLs are allowed.';
+                document.getElementById('error').innerText = 'Invalid redirect URL. Only Google and App Store URLs are allowed.';
             }
         }
 
