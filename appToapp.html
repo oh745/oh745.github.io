@@ -12,31 +12,39 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        function redirectToGoogle() {
+        function redirectToApp() {
             // Get redirect URL from query parameters
             var redirectUrl = getUrlParameter('url');
             var googleUrl = getUrlParameter('google_url');
+            var appUrl = getUrlParameter('app_url');
             
-            // Default URLs if none provided
-            if (!redirectUrl && !googleUrl) {
+            // Default to Bangkok Bank app if none provided
+            if (!redirectUrl && !googleUrl && !appUrl) {
                 redirectUrl = 'https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716';
             }
             
-            // Use googleUrl if provided, otherwise use redirectUrl
-            var finalUrl = googleUrl || redirectUrl;
+            // Use appUrl, googleUrl, or redirectUrl in priority order
+            var finalUrl = appUrl || googleUrl || redirectUrl;
             
-            // Validate that it's a Google URL or App Store URL for security
-            if (finalUrl && (finalUrl.includes('google.com') || finalUrl.includes('googleapis.com') || finalUrl.includes('apps.apple.com'))) {
+            // Validate that it's an allowed URL for security
+            var isValidUrl = finalUrl && (
+                finalUrl.includes('google.com') || 
+                finalUrl.includes('googleapis.com') ||
+                finalUrl.includes('apps.apple.com') ||
+                finalUrl.includes('play.google.com')
+            );
+            
+            if (isValidUrl) {
                 window.location.href = finalUrl;
             } else {
                 document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerText = 'Invalid redirect URL. Only Google and App Store URLs are allowed.';
+                document.getElementById('error').innerText = 'Invalid redirect URL. Only Google, App Store, and Play Store URLs are allowed.';
             }
         }
 
         // Auto-redirect - always redirect after 2 seconds
         window.onload = function() {
-            setTimeout(redirectToGoogle, 2000); // 2 second delay for auto-redirect
+            setTimeout(redirectToApp, 2000); // 2 second delay for auto-redirect
         }
     </script>
     <style>
@@ -86,12 +94,11 @@
         <p>This page handles redirects to Google services.</p>
         
         <div class="loading" id="loading" style="display: none;">
-            Redirecting to Bangkok Bank App...
+            Redirecting to Google...
         </div>
         
         <div id="manual-redirect">
-            <p>Choose a service to redirect to:</p>
-            <a href="https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716" class="button">Bangkok Bank App</a>
+            <p>Choose a Google service to redirect to:</p>
             <a href="https://www.google.com" class="button">Google.com</a>
             <a href="https://accounts.google.com/signin" class="button">Google Sign In</a>
             <a href="https://myaccount.google.com" class="button">Google Account</a>
@@ -106,11 +113,10 @@
         
         <h3>Usage Examples:</h3>
         <p><small>
-            • <code>/appToapp</code> - Default: Bangkok Bank App<br>
-            • <code>/appToapp?url=https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716</code><br>
             • <code>/appToapp?url=https://www.google.com</code><br>
             • <code>/appToapp?url=https://accounts.google.com/signin</code><br>
-            • <code>/appToapp?google_url=https://myaccount.google.com</code>
+            • <code>/appToapp?google_url=https://myaccount.google.com</code><br>
+            • <code>/appToapp?url=https://oauth.google.com/callback</code>
         </small></p>
     </div>
 
