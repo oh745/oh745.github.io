@@ -12,19 +12,56 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
+        function detectDevice() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Check if iOS
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return 'ios';
+            }
+            
+            // Check if Android
+            if (/android/i.test(userAgent)) {
+                return 'android';
+            }
+            
+            return 'web';
+        }
+
         function redirectToApp() {
             // Get redirect URL from query parameters
             var redirectUrl = getUrlParameter('url');
             var googleUrl = getUrlParameter('google_url');
             var appUrl = getUrlParameter('app_url');
+            var iosUrl = getUrlParameter('ios_url');
+            var androidUrl = getUrlParameter('android_url');
             
-            // Default to Bangkok Bank website if none provided
-            if (!redirectUrl && !googleUrl && !appUrl) {
-                redirectUrl = 'https://www.bangkokbank.com';
+            var finalUrl;
+            
+            // If specific URLs are provided, use them
+            if (appUrl || googleUrl || redirectUrl) {
+                finalUrl = appUrl || googleUrl || redirectUrl;
+            } else if (iosUrl || androidUrl) {
+                // Use device-specific URLs if provided
+                var device = detectDevice();
+                if (device === 'ios' && iosUrl) {
+                    finalUrl = iosUrl;
+                } else if (device === 'android' && androidUrl) {
+                    finalUrl = androidUrl;
+                } else {
+                    finalUrl = iosUrl || androidUrl; // fallback
+                }
+            } else {
+                // Default URLs based on device
+                var device = detectDevice();
+                if (device === 'ios') {
+                    finalUrl = 'https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716';
+                } else if (device === 'android') {
+                    finalUrl = 'https://play.google.com/store/apps/details?id=com.bbl.mobilebanking';
+                } else {
+                    finalUrl = 'https://www.bangkokbank.com';
+                }
             }
-            
-            // Use appUrl, googleUrl, or redirectUrl in priority order
-            var finalUrl = appUrl || googleUrl || redirectUrl;
             
             // Validate that it's an allowed URL for security
             var isValidUrl = finalUrl && (
@@ -95,17 +132,23 @@
         <p>This page handles redirects to apps and services.</p>
         
         <div class="loading" id="loading" style="display: none;">
-            Redirecting to Bangkok Bank...
+            <span id="redirect-message">Redirecting to Bangkok Bank...</span>
         </div>
         
         <div id="manual-redirect">
             <p>Choose where to redirect:</p>
-            <a href="https://www.bangkokbank.com" class="button">Bangkok Bank Website</a>
-            <a href="https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716" class="button">Bangkok Bank App (iOS)</a>
-            <a href="https://www.google.com" class="button">Google.com</a>
-            <a href="https://accounts.google.com/signin" class="button">Google Sign In</a>
+            <div id="device-buttons">
+                <a href="https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716" class="button">Bangkok Bank (iOS)</a>
+                <a href="https://play.google.com/store/apps/details?id=com.bbl.mobilebanking" class="button">Bangkok Bank (Android)</a>
+                <a href="https://www.bangkokbank.com" class="button">Bangkok Bank (Website)</a>
+            </div>
+            <hr style="margin: 20px 0;">
+            <div>
+                <a href="https://www.google.com" class="button">Google.com</a>
+                <a href="https://accounts.google.com/signin" class="button">Google Sign In</a>
+            </div>
             <br>
-            <button onclick="redirectToApp()" class="button">Custom Redirect</button>
+            <button onclick="redirectToApp()" class="button">Smart Redirect (Auto-detect Device)</button>
         </div>
         
         <div class="error" id="error"></div>
@@ -114,17 +157,35 @@
         
         <h3>Usage Examples:</h3>
         <p><small>
-            • <code>/appToapp</code> - Auto redirects to Bangkok Bank Website<br>
-            • <code>/appToapp?url=https://www.bangkokbank.com</code><br>
-            • <code>/appToapp?app_url=https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716</code><br>
+            <strong>Smart Detection (แนะนำ):</strong><br>
+            • <code>/appToapp</code> - Auto-detect device และ redirect ไปแอปที่เหมาะสม<br><br>
+            
+            <strong>Device-Specific URLs:</strong><br>
+            • <code>/appToapp?ios_url=https://apps.apple.com/...</code><br>
+            • <code>/appToapp?android_url=https://play.google.com/...</code><br><br>
+            
+            <strong>General URLs:</strong><br>
             • <code>/appToapp?url=https://www.google.com</code><br>
+            • <code>/appToapp?app_url=https://apps.apple.com/...</code><br>
         </small></p>
     </div>
 
     <script>
-        // Always show loading message since we auto-redirect
+        // Show appropriate loading message and redirect
         document.getElementById('loading').style.display = 'block';
         document.getElementById('manual-redirect').style.display = 'none';
+        
+        // Update loading message based on device
+        var device = detectDevice();
+        var message = document.getElementById('redirect-message');
+        
+        if (device === 'ios') {
+            message.textContent = 'Redirecting to Bangkok Bank iOS App...';
+        } else if (device === 'android') {
+            message.textContent = 'Redirecting to Bangkok Bank Android App...';
+        } else {
+            message.textContent = 'Redirecting to Bangkok Bank Website...';
+        }
     </script>
 </body>
 </html>
