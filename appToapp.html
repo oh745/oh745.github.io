@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App to App Redirect</title>
+    <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function redirectToGoogle() {
+            // Get redirect URL from query parameters
+            var redirectUrl = getUrlParameter('url');
+            var googleUrl = getUrlParameter('google_url');
+            
+            // Default Google URLs if none provided
+            if (!redirectUrl && !googleUrl) {
+                redirectUrl = 'https://www.google.com';
+            }
+            
+            // Use googleUrl if provided, otherwise use redirectUrl
+            var finalUrl = googleUrl || redirectUrl;
+            
+            // Validate that it's a Google URL for security
+            if (finalUrl && (finalUrl.includes('google.com') || finalUrl.includes('googleapis.com'))) {
+                window.location.href = finalUrl;
+            } else {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerText = 'Invalid redirect URL. Only Google URLs are allowed.';
+            }
+        }
+
+        // Auto-redirect - always redirect after 2 seconds
+        window.onload = function() {
+            setTimeout(redirectToGoogle, 2000); // 2 second delay for auto-redirect
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .button {
+            background-color: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background-color: #3367d6;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+            display: none;
+        }
+        .loading {
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>App to App Redirect</h1>
+        <p>This page handles redirects to Google services.</p>
+        
+        <div class="loading" id="loading" style="display: none;">
+            Redirecting to Google...
+        </div>
+        
+        <div id="manual-redirect">
+            <p>Choose a Google service to redirect to:</p>
+            <a href="https://www.google.com" class="button">Google.com</a>
+            <a href="https://accounts.google.com/signin" class="button">Google Sign In</a>
+            <a href="https://myaccount.google.com" class="button">Google Account</a>
+            <a href="https://oauth.google.com" class="button">Google OAuth</a>
+            <br>
+            <button onclick="redirectToGoogle()" class="button">Custom Redirect</button>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <hr style="margin: 30px 0;">
+        
+        <h3>Usage Examples:</h3>
+        <p><small>
+            • <code>/appToapp?url=https://www.google.com</code><br>
+            • <code>/appToapp?url=https://accounts.google.com/signin</code><br>
+            • <code>/appToapp?google_url=https://myaccount.google.com</code><br>
+            • <code>/appToapp?url=https://oauth.google.com/callback</code>
+        </small></p>
+    </div>
+
+    <script>
+        // Always show loading message since we auto-redirect
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('manual-redirect').style.display = 'none';
+    </script>
+</body>
+</html>
