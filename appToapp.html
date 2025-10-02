@@ -18,9 +18,9 @@
             var googleUrl = getUrlParameter('google_url');
             var appUrl = getUrlParameter('app_url');
             
-            // Default to Bangkok Bank app if none provided
+            // Default to Bangkok Bank website if none provided
             if (!redirectUrl && !googleUrl && !appUrl) {
-                redirectUrl = 'https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716';
+                redirectUrl = 'https://www.bangkokbank.com';
             }
             
             // Use appUrl, googleUrl, or redirectUrl in priority order
@@ -31,7 +31,8 @@
                 finalUrl.includes('google.com') || 
                 finalUrl.includes('googleapis.com') ||
                 finalUrl.includes('apps.apple.com') ||
-                finalUrl.includes('play.google.com')
+                finalUrl.includes('play.google.com') ||
+                finalUrl.includes('bangkokbank.com')
             );
             
             if (isValidUrl) {
@@ -91,20 +92,20 @@
 <body>
     <div class="container">
         <h1>App to App Redirect</h1>
-        <p>This page handles redirects to Google services.</p>
+        <p>This page handles redirects to apps and services.</p>
         
         <div class="loading" id="loading" style="display: none;">
-            Redirecting to Google...
+            Redirecting to Bangkok Bank...
         </div>
         
         <div id="manual-redirect">
-            <p>Choose a Google service to redirect to:</p>
+            <p>Choose where to redirect:</p>
+            <a href="https://www.bangkokbank.com" class="button">Bangkok Bank Website</a>
+            <a href="https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716" class="button">Bangkok Bank App (iOS)</a>
             <a href="https://www.google.com" class="button">Google.com</a>
             <a href="https://accounts.google.com/signin" class="button">Google Sign In</a>
-            <a href="https://myaccount.google.com" class="button">Google Account</a>
-            <a href="https://oauth.google.com" class="button">Google OAuth</a>
             <br>
-            <button onclick="redirectToGoogle()" class="button">Custom Redirect</button>
+            <button onclick="redirectToApp()" class="button">Custom Redirect</button>
         </div>
         
         <div class="error" id="error"></div>
@@ -113,10 +114,10 @@
         
         <h3>Usage Examples:</h3>
         <p><small>
+            • <code>/appToapp</code> - Auto redirects to Bangkok Bank Website<br>
+            • <code>/appToapp?url=https://www.bangkokbank.com</code><br>
+            • <code>/appToapp?app_url=https://apps.apple.com/us/app/bangkok-bank-mobile-banking/id660238716</code><br>
             • <code>/appToapp?url=https://www.google.com</code><br>
-            • <code>/appToapp?url=https://accounts.google.com/signin</code><br>
-            • <code>/appToapp?google_url=https://myaccount.google.com</code><br>
-            • <code>/appToapp?url=https://oauth.google.com/callback</code>
         </small></p>
     </div>
 
